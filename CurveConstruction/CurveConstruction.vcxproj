@@ -163,6 +163,7 @@
     <ClInclude Include="src\curves\CurveSet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="data\Calendars.h" />
     <ClCompile Include="src\cashflows\CashflowScheduler.cpp" />
     <ClCompile Include="src\utils\Date.cpp" />
     <ClCompile Include="src\solver\Solve.cpp" />

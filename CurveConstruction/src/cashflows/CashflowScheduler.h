@@ -3,18 +3,26 @@
 
 #include "../utils/Date.h"	
 
+struct CashflowDates{
+	Date unadjusted_start_date;
+	Date adjusted_start_date ;
+	Date unadjusted_end_date;
+	Date adjusted_end_date;
+	
+	CashflowDates(const Date& _unadjusted_start_date, const Date& _adjusted_start_date,
+		const Date& _unadjusted_end_date, const Date& _adjusted_end_date) : unadjusted_start_date(_unadjusted_start_date), adjusted_start_date(_adjusted_start_date)
+		, unadjusted_end_date(_unadjusted_end_date), adjusted_end_date(_adjusted_end_date) {}
+};
+
 class CashflowScheduler
 {
 	
-
-
 public:
-	Date start_date;
-	Date end_date;
 
-	CashflowScheduler(const Date& _start_date, const Date&  _end_date, const string& _calendar, const string& _stub_type) : start_date(_start_date), end_date(_end_date) {};
+	CashflowScheduler();
 
-	CashflowScheduler& generateCashflows(const string& frequency);
+	static vector<CashflowDates> generateCashflows(const Date& start_date, const Date& end_date, string& calendar, string& stub_type, 
+												   const string& frequency, const string& roll_conv);
 
 };
 

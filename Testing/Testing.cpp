@@ -2,12 +2,33 @@
 #include "CppUnitTest.h"
 #include "./data/instrument_data.h"
 #include "../CurveConstruction/src/utils/Date.h"
+#include "../CurveConstruction/data/Calendars.h"
+#include "../CurveConstruction/src/cashflows/CashflowScheduler.h"
+
+#include <string>
+#include <map>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
 
 namespace Testing
 {
+
+	TEST_CLASS(CashflowSchedule)
+	{
+	public:
+
+		TEST_METHOD(TestGenerateCashflowSchdule)
+		{
+			Date start_date = Date(10, 2, 2024), end_date = Date(10, 2, 2034);
+		/*	string cal = "LON", stub_type = "SS";
+			CashflowScheduler cf_schedule = CashflowScheduler(start_date, end_date, cal, stub_type);*/
+
+			//Assert::AreEqual(1, cash_size);
+
+		}
+	};
+
 	TEST_CLASS(InputData)
 	{
 	public:
@@ -52,6 +73,44 @@ namespace Testing
 
 
 		}
+
+		TEST_METHOD(TestDifferenceBetweenTwoDates)
+		{
+			Date date1 = Date(1, 1, 2001);
+			Date date2 = Date(2, 1, 2001);
+			int result = date2 - date1;
+			Assert::AreEqual(1, result);
+
+		}
+
+		TEST_METHOD(TestGetCalendars)
+		{
+			map<Date, string> lon_cal = Calendar::get("LON");
+			size_t result_len = 625;
+			Assert::AreEqual(result_len, lon_cal.size());
+
+			map<Date, string> us_cal = Calendar::get("USD");
+			result_len = 710;
+			Assert::AreEqual(result_len, us_cal.size());
+
+			map<Date, string> eur_cal = Calendar::get("EUR");
+			result_len = 497;
+			Assert::AreEqual(result_len, eur_cal.size());
+
+			Date holiday = Date(26, 12, 2024);
+			auto iterator = lon_cal.find(holiday);
+			bool isHoliday = (iterator != lon_cal.end()) ?  true : false;
+			Assert::AreEqual(true, isHoliday);
+
+			Date not_holiday = Date(27, 12, 2024);
+			iterator = lon_cal.find(not_holiday);
+			isHoliday = (iterator != lon_cal.end()) ? true : false;
+			Assert::AreEqual(false, isHoliday);
+
+
+
+		}
+
 
 		TEST_METHOD(TestDateGreaterThanOperator)
 		{

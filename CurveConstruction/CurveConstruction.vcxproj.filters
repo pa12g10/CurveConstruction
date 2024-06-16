@@ -89,5 +89,8 @@
     <ClCompile Include="src\cashflows\CashflowScheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="data\Calendars.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

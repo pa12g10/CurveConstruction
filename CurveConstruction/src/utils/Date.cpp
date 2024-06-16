@@ -56,6 +56,17 @@ bool Date::operator<=(const Date& rhs_date) const
     return (*this < rhs_date) || (*this == rhs_date);
 }
 
+int Date::operator-(const Date& rhs_date) const
+{
+    if (*this == rhs_date)
+        return 0;
+
+    int lhs_date_serial_num = Date::dateToSerialNumber(this->yyyy, this->mm, this->dd);
+    int rhs_date_serial_num = Date::dateToSerialNumber(rhs_date.yyyy, rhs_date.mm, rhs_date.dd);
+
+    return lhs_date_serial_num - rhs_date_serial_num;
+}
+
 Date Date::addDurationToDate(Date date, string duration) {
     transform(duration.begin(), duration.end(), duration.begin(), ::tolower);
     int duration_size = stoi(duration.substr(0, duration.size() - 1));
@@ -124,4 +135,24 @@ Date Date::addDurationToDate(Date date, string duration) {
     }
 
     return date;
+}
+
+int Date::dateToSerialNumber(const int& year, const int& month, const int& day) {
+    const int baseYear = 1900;
+    const int baseMonth = 1;
+    const int baseDay = 1;
+
+    int serialNumber = 0;
+
+    for (int y = baseYear; y < year; ++y) {
+        serialNumber += Date::isYearALeapYear(y) ? 366 : 365;
+    }
+
+    for (int m = baseMonth; m < month; ++m) {
+        serialNumber += Date::daysInMonth(year, m);
+    }
+
+    serialNumber += day - baseDay;
+
+    return serialNumber;
 }
