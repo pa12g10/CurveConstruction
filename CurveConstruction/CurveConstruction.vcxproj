@@ -94,6 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)$(ProjectName)\Src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\cashflows\CashflowScheduler.h" />
     <ClInclude Include="data\instrument_data.h" />
     <ClInclude Include="src\utils\Date.h" />
     <ClInclude Include="src\solver\Solve.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="src\curves\CurveSet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cashflows\CashflowScheduler.cpp" />
     <ClCompile Include="src\utils\Date.cpp" />
     <ClCompile Include="src\solver\Solve.cpp" />
     <ClCompile Include="src\interpolators\CubicSpline.cpp" />

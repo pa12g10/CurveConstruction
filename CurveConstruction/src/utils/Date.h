@@ -1,58 +1,76 @@
 #ifndef DATE_H
 #define DATE_H
 
+#include <iostream>
 #include <string>
+#include <vector>
+
 using namespace std;
 
 class Date
 {
+
+public:
+
 	int dd;
 	int mm;
 	int yyyy;
 	bool isLeapYear;
 
-	const int monthDays[12]
-		= { 31, 28, 31, 30, 31, 30,
-		   31, 31, 30, 31, 30, 31 };
+	int monthDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-public:
+    // Constructors
 	Date(const int& _dd, const int& _mm, const int& _yyyy) : dd(_dd), mm(_mm), yyyy(_yyyy) {
 
-		// Is Leap Year
-		if ((yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0)) {
-			isLeapYear = true; 
-		}
-		else {
-			isLeapYear = false; 
-		}
+        isDateALeapYear();
 	}
 
-    static void addDurationToDate(Date date, string duration) {
-        int duration_size = stoi(duration.substr(duration.size() - 1));
-        if (duration.find('D') != std::string::npos || duration.find('B') != std::string::npos 
-            || duration.find('d') != std::string::npos || duration.find('b') != std::string::npos ) {
-            date.dd += duration_size;
-            while (date.dd > 31) {
-                date.dd -= 31;
-                date.mm++;
-            }
+    Date(const string& date_string){
+
+        if (!(date_string.size() == 10)) {
+            throw ("Date string format must be in form DD-MM-YYYY or DD/MM/YYYY");
         }
-        else if (duration.find('M') != std::string::npos || duration.find('m') != std::string::npos) {
-            date.mm += duration_size;
-            while (date.mm > 12) {
-                date.mm -= 12;
-                date.yyyy++;
-            }
-        }
-        else if (duration.find('y') != std::string::npos || duration.find('Y') != std::string::npos) {
-            date.yyyy += duration_size;
-            if (date.mm == 2 && date.dd == 29 && !date.isLeapYear) {
-                date.dd = 28;
-            }
+
+        dd = stoi(date_string.substr(0, 2));
+        mm = stoi(date_string.substr(3, 5));
+        yyyy = stoi(date_string.substr(6, 10));
+
+        isDateALeapYear();
+    }
+
+    // Operator Overload Functions
+    bool operator>(const Date& other_date) const;
+
+    bool operator<(const Date& other_date) const;
+
+    bool operator==(const Date& other_date) const;
+
+    bool operator!=(const Date& other_date) const;
+
+    bool operator>=(const Date& other_date) const;
+
+    bool operator<=(const Date& other_date) const;
+
+    // Member Functions
+    void checkYearChange() {
+        isDateALeapYear();
+        if (mm == 2 && dd == 29 && !isLeapYear) {
+            dd = 28;
         }
     }
 
+    void isDateALeapYear() {
+        if ((yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0)) {
+            isLeapYear = true;
+            monthDays[1] = 29;
+        }
+        else {
+            isLeapYear = false;
+            monthDays[1] = 28;
+        }
+    };
 
+    static Date addDurationToDate(Date date, string duration);
 
 };
 
