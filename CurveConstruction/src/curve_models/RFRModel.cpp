@@ -1,0 +1,1 @@
+#include "../src/curve_models/RFRModel.h"

@@ -1,105 +1,55 @@
 #ifndef DATE_H
 #define DATE_H
 
-#include <iostream>
 #include <string>
-#include <vector>
+#include <stdexcept>
+#include <unordered_map>
 
-using namespace std;
+#include "../data/Calendars.h"
 
-// TODO: Overlap of some functions needs tidy up.
-
-class Date
-{
-
+class Date {
 public:
+    // Constructor
+    Date(int day = 1, int month = 1, int year = 1900);
+    Date(const std::string& dateString);
 
-	int dd;
-	int mm;
-	int yyyy;
-	bool isLeapYear;
+    // Operators for comparison
+    bool operator>(const Date& other) const;
+    bool operator<(const Date& other) const;
+    bool operator==(const Date& other) const;
+    bool operator!=(const Date& other) const;
+    bool operator>=(const Date& other) const;
+    bool operator<=(const Date& other) const;
 
-	int monthDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    // Arithmetic operator for date subtraction
+    int operator-(const Date& other) const;
 
-    // Constructors
-	Date(const int& _dd, const int& _mm, const int& _yyyy) : dd(_dd), mm(_mm), yyyy(_yyyy) {
+    // Function to manipulate Dates
+    Date addDuration(int amount, char type) const;
+    Date addDuration(const std::string& duration);
+    Date businessDayAdjusted(const CalendarKey& calendar, const BusinessDayConv& business_day_conv);
+    Date prevBusinessDay(const CalendarKey& calendar);
+    Date nextBusinessDay(const CalendarKey& calendar);
+    bool isHoliday(const CalendarKey& calendar_key);
+    int  getWeekday() const;
+    bool isWeekend();
+    bool isBusinessDay(const CalendarKey& calendar_key) { return !(this->isHoliday(calendar_key) || this->isWeekend()); }
 
-        isDateALeapYear();
-	}
+    // Helper functions
+    void normalize();
+    static bool isLeapYear(int year);
+    static int daysInMonth(int year, int month);
+    static int countFrequencyUnits(const Date& start, const Date& end, const std::string& frequency);
+    static std::string normalizeDate(const std::string& date_str);
+    static std::string dateToString(const int& day, const int& month, const int& year);
 
-    Date(const string& date_string){
+    // Member variables
+    int yyyy, mm, dd;
+    std::string date_str;
 
-        if (!(date_string.size() == 10)) {
-            throw ("Date string format must be in form DD-MM-YYYY or DD/MM/YYYY");
-        }
-
-        dd = stoi(date_string.substr(0, 2));
-        mm = stoi(date_string.substr(3, 5));
-        yyyy = stoi(date_string.substr(6, 10));
-
-        isDateALeapYear();
-    }
-
-    // Operator Overload Functions
-    bool operator>(const Date& rhs_date) const;
-
-    bool operator<(const Date& rhs_date) const;
-
-    bool operator==(const Date& rhs_date) const;
-
-    bool operator!=(const Date& rhs_date) const;
-
-    bool operator>=(const Date& rhs_date) const;
-
-    bool operator<=(const Date& rhs_date) const;
-
-    int operator-(const Date& rhs_date) const;
-
-    // Member Functions
-    void checkYearChange() {
-        isDateALeapYear();
-        if (mm == 2 && dd == 29 && !isLeapYear) {
-            dd = 28;
-        }
-    }
-
-    void isDateALeapYear() {
-        if ((yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0)) {
-            isLeapYear = true;
-            monthDays[1] = 29;
-        }
-        else {
-            isLeapYear = false;
-            monthDays[1] = 28;
-        }
-    };
-
-    static bool isYearALeapYear(const int& year) {
-        if (year % 400 == 0) return true;
-        if (year % 100 == 0) return false;
-        if (year % 4 == 0) return true;
-        return false;
-    }
-
-    static int daysInMonth(int year, int month) {
-        switch (month) {
-        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-            return 31;
-        case 4: case 6: case 9: case 11:
-            return 30;
-        case 2:
-            return isYearALeapYear(year) ? 29 : 28;
-        default:
-            return 0;
-        }
-    }
-
-    static Date addDurationToDate(Date date, string duration);
-    static int dateToSerialNumber(const int& year, const int& month, const int& day);
-    static bool isBusinessDay(const string& calendar) {};
-    static void adjusted_date(const string& calendar, const string& roll_conv) {};
-
+private:
+    // Constants for days in each month (non-leap year)
+    static const int daysInMonthNonLeap[12];
 };
 
 #endif // DATE_H
-
