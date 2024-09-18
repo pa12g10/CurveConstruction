@@ -149,10 +149,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="data\enums.h" />
+    <ClInclude Include="data\Enums.h" />
     <ClInclude Include="src\cashflows\CashflowScheduler.h" />
-    <ClInclude Include="data\instrument_data.h" />
+    <ClInclude Include="data\InstrumentData.h" />
     <ClInclude Include="src\curve_models\RFRModel.h" />
+    <ClInclude Include="src\instruments\InstrumentPricer.h" />
+    <ClInclude Include="src\interpolators\Linear.h" />
     <ClInclude Include="src\utils\Date.h" />
     <ClInclude Include="src\solver\Solve.h" />
     <ClInclude Include="src\interpolators\CubicSpline.h" />
@@ -165,9 +167,15 @@
     <ClInclude Include="src\curves\CurveSet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="data\CurveData.cpp" />
     <ClCompile Include="data\Calendars.h" />
+    <ClCompile Include="data\CurveData.h" />
+    <ClCompile Include="data\CustomTypes.h" />
+    <ClCompile Include="data\Enums.cpp" />
+    <ClCompile Include="data\InstrumentData.cpp" />
     <ClCompile Include="src\cashflows\CashflowScheduler.cpp" />
     <ClCompile Include="src\curve_models\RFRModel.cpp" />
+    <ClCompile Include="src\interpolators\Interpolator.h" />
     <ClCompile Include="src\utils\Date.cpp" />
     <ClCompile Include="src\solver\Solve.cpp" />
     <ClCompile Include="src\interpolators\CubicSpline.cpp" />

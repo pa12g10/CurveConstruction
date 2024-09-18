@@ -42,7 +42,7 @@
     <ClInclude Include="src\solver\Solve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data\instrument_data.h">
+    <ClInclude Include="data\InstrumentData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Date.h">
@@ -51,10 +51,16 @@
     <ClInclude Include="src\cashflows\CashflowScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data\enums.h">
+    <ClInclude Include="src\curve_models\RFRModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\curve_models\RFRModel.h">
+    <ClInclude Include="data\Enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpolators\Linear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\instruments\InstrumentPricer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -99,6 +105,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\curve_models\RFRModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\CustomTypes.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\CurveData.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interpolators\Interpolator.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\InstrumentData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\CurveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="data\Enums.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

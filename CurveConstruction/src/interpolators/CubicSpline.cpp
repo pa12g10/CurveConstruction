@@ -3,66 +3,77 @@
 #include <cassert>
 #include <algorithm>
 
-CubicSpline::CubicSpline(const std::vector<double>& time, const std::vector<double>& value)
-    : time_(time), value_(value) {
-    if (time_.size() != value_.size()) {
+CubicSpline::CubicSpline(const std::vector<double>& _times, const std::vector<double>& _values)
+    : times(_times), values(_values) {
+    if (times.size() != values.size()) {
         throw std::invalid_argument("The size of time and value vectors must be equal.");
     }
-
-    size_t n = time_.size();
-    a_.resize(n);
-    b_.resize(n);
-    c_.resize(n);
-    d_.resize(n);
-
-    std::vector<double> h(n - 1);
-    for (size_t i = 0; i < n - 1; ++i) {
-        h[i] = time_[i + 1] - time_[i];
-    }
-
-    std::vector<double> alpha(n);
-    for (size_t i = 1; i < n - 1; ++i) {
-        alpha[i] = 3.0 / h[i] * (value_[i + 1] - value_[i]) - 3.0 / h[i - 1] * (value_[i] - value_[i - 1]);
-    }
-    alpha[0] = 1.0;
-    alpha[n - 1] = 1.0;
-
-    std::vector<double> l(n);
-    std::vector<double> mu(n);
-    l[0] = 1.0;
-    mu[0] = 0.0;
-    for (size_t i = 1; i < n; ++i) {
-        l[i] = 2.0 * (time_[i] - time_[i - 1]) - h[i - 1] * mu[i - 1];
-        mu[i] = h[i] / l[i];
-    }
-
-    c_[n - 1] = 0.0;
-    for (int i = n - 2; i >= 0; --i) {
-        c_[i] = (alpha[i] - h[i] * c_[i + 1]) / l[i];
-    }
-
-    for (size_t i = 0; i < n - 1; ++i) {
-        b_[i] = (value_[i + 1] - value_[i]) / h[i] - h[i] * (c_[i + 1] + 2.0 * c_[i]) / 3.0;
-        d_[i] = (c_[i + 1] - c_[i]) / (3.0 * h[i]);
-    }
-    b_[n - 1] = 0.0;
-    d_[n - 1] = 0.0;
+    computeCoefficients();
 }
 
-double CubicSpline::interpolate(double t) const {
-    size_t n = time_.size();
-    size_t index = std::distance(time_.begin(), std::lower_bound(time_.begin(), time_.end(), t));
-    if (index == 0) {
-        index = 1;
-    }
-    else if (index == n) {
-        index = n - 1;
+std::vector<double> CubicSpline::solve_tridiagonal(const std::vector<double>& lower, const std::vector<double>& diag, const std::vector<double>& upper, const std::vector<double>& rhs) {
+    size_t n = diag.size();
+    if (lower.size() != n - 1 || upper.size() != n - 1 || rhs.size() != n) {
+        throw std::invalid_argument("Vector sizes do not match for tridiagonal system.");
     }
 
-    double h = time_[index] - time_[index - 1];
-    double t_ = (t - time_[index - 1]) / h;
-    double t2 = t_ * t_;
-    double t3 = t2 * t_;
+    std::vector<double> gamma(n, 0.0), delta(n, 0.0);
 
-    return a_[index - 1] * t3 + b_[index - 1] * t2 + c_[index - 1] * t_ + d_[index - 1];
+    gamma[0] = upper[0] / diag[0];
+    delta[0] = rhs[0] / diag[0];
+
+    // Loop from 1 to n-1
+    for (size_t i = 1; i < n - 1; ++i) {
+        gamma[i] = upper[i] / (diag[i] - lower[i] * gamma[i - 1]);
+        delta[i] = (rhs[i] - lower[i] * delta[i - 1]) / (diag[i] - lower[i] * gamma[i - 1]);
+    }
+
+    std::vector<double> c(n);
+    c[n - 1] = delta[n - 1];
+    for (int i = n - 2; i >= 0; --i) {
+        c[i] = delta[i] - gamma[i] * c[i + 1];
+    }
+
+    return c;
+}
+
+void CubicSpline::computeCoefficients() {
+    size_t n = times.size();
+    std::vector<double> lower(n - 1, 1.0), diag(n, 2.0), upper(n - 1, 1.0), rhs(n);
+    for (size_t i = 1; i < n - 1; ++i) {
+        lower[i - 1] = (times[i] - times[i - 1]) / (times[i + 1] - times[i - 1]);
+        upper[i - 1] = (times[i + 1] - times[i]) / (times[i + 1] - times[i - 1]);
+        rhs[i] = 3.0 * ((values[i + 1] - values[i]) / (times[i + 1] - times[i]) - (values[i] - values[i - 1]) / (times[i] - times[i - 1]));
+    }
+
+    // Natural spline boundary conditions
+    rhs[0] = 0.0;
+    rhs[n - 1] = 0.0;
+    diag[0] = diag[n - 1] = 1.0;
+
+    std::vector<double> c = solve_tridiagonal(lower, diag, upper, rhs);
+
+    // Compute coefficients for each segment
+    a.resize(n - 1);
+    b.resize(n - 1);
+    this->c.resize(n - 1);
+    d.resize(n - 1);
+    for (size_t i = 0; i < n - 1; ++i) {
+        d[i] = (c[i + 1] - c[i]) / (3.0 * (times[i + 1] - times[i]));
+        b[i] = c[i];
+        a[i] = values[i];
+        this->c[i] = (values[i + 1] - values[i]) / (times[i + 1] - times[i]) - (2.0 * c[i] + c[i + 1]) * (times[i + 1] - times[i]) / 3.0;
+    }
+}
+
+double CubicSpline::interpolate(double time) const {
+    size_t n = times.size();
+    for (size_t i = 0; i < n - 1; ++i) {
+        if (time < times[i + 1]) {
+            double dt = time - times[i];
+            return a[i] + b[i] * dt + c[i] * dt * dt + d[i] * dt * dt * dt;
+        }
+    }
+    // If time is out of bounds, return the last or first value depending on the direction
+    return time < times[0] ? values[0] : values[n - 1];
 }

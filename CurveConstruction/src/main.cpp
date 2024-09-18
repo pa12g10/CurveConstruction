@@ -6,7 +6,7 @@
 #include <fstream>
 #include <vector>
 
-#include "../data/instrument_data.h"
+#include "../data/InstrumentData.h"
 
 using namespace std;
 
@@ -18,11 +18,7 @@ int main() {
 
 	string valuation_date = "03-06-2024";
 
-	auto ois_cash = CashInstrumentStaticData().get();
-	auto ois_swaps = OISSwapInstrumentStaticData().get();
-	auto cb_swaps = CBSwapInstrumentStaticData().get();
-
-	double rate_1 = std::get<double>(ois_cash[0]["Rate"]);
+	double rate_1 = std::get<double>(ois_swap_instrument_data[0]["Rate"]);
 	cout << rate_1 << endl;
 
 

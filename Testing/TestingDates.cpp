@@ -1,19 +1,19 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "./data/instrument_data.h"
 #include "../CurveConstruction/src/utils/Date.h"
 #include "../CurveConstruction/data/Calendars.h"
 #include "../CurveConstruction/src/cashflows/CashflowScheduler.h"
+#include "../CurveConstruction/src/curve_models/RFRModel.h"
+#include "../CurveConstruction/data/CurveData.h"
+#include "../CurveConstruction/data/InstrumentData.h"
 
-#include <string>
-#include <unordered_map>
-#include <vector>
+
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
 using std::vector;
 
-namespace Testing
+namespace TestingDates
 {
 
 	TEST_CLASS(CppFeatures)
@@ -65,13 +65,9 @@ namespace Testing
 		
 		TEST_METHOD(TestInstrumentDataLoads)
 		{
-			auto ois_cash = CashInstrumentStaticData().get();
-			auto ois_swaps = OISSwapInstrumentStaticData().get();
-			auto cb_swaps = CBSwapInstrumentStaticData().get();
-
-			int cash_size = ois_cash.size();
-			int oisswaps_size = ois_swaps.size();
-			int cbswaps_size = cb_swaps.size();
+			int cash_size = cash_instrument_data.size();
+			int oisswaps_size = ois_swap_instrument_data.size();
+			int cbswaps_size = cbswap_instrument_data.size();
 
 			Assert::AreEqual(1, cash_size);
 			Assert::AreEqual(8, oisswaps_size);
@@ -128,12 +124,12 @@ namespace Testing
 			Assert::AreEqual(result_len, eur_cal.size());
 
 
-			std::string holiday = "26-12-2024";
+			auto holiday = "26-12-2024";
 			auto iterator = lon_cal.find(holiday);
 			bool isHoliday = (iterator != lon_cal.end()) ?  true : false;
 			Assert::AreEqual(true, isHoliday);
 
-			std::string not_holiday = "27-12-2024";
+			auto not_holiday = "27-12-2024";
 			iterator = lon_cal.find(not_holiday);
 			isHoliday = (iterator != lon_cal.end()) ? true : false;
 			Assert::AreEqual(false, isHoliday);

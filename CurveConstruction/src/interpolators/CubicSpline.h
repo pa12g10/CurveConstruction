@@ -3,19 +3,31 @@
 
 #include <vector>
 #include <stdexcept>
+#include "Interpolator.h"
 
-class CubicSpline {
+class CubicSpline : public Interpolator {
 public:
-    CubicSpline(const std::vector<double>& time, const std::vector<double>& value);
-    double interpolate(double t) const;
+
+    CubicSpline(const std::vector<double>& _times, const std::vector<double>& _values);
+
+    double interpolate(double time) const override;
+
+    void setValues(const std::vector<double>& _times, const std::vector<double>& _values) override {
+        times = _times;
+        values = _values;
+        computeCoefficients();
+    }
+    std::vector<double> solve_tridiagonal(const std::vector<double>& lower, const std::vector<double>& diag, const std::vector<double>& upper, const std::vector<double>& rhs);
+    void computeCoefficients();
 
 private:
-    std::vector<double> time_;
-    std::vector<double> value_;
-    std::vector<double> a_;
-    std::vector<double> b_;
-    std::vector<double> c_;
-    std::vector<double> d_;
+    // Vectors to hold the spline coefficients and data points
+    std::vector<double> times;
+    std::vector<double> values;
+    std::vector<double> a;
+    std::vector<double> b;
+    std::vector<double> c;
+    std::vector<double> d;
 };
 
 #endif // CUBICSPLINE_H

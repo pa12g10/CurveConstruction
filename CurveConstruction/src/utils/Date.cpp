@@ -133,13 +133,13 @@ int Date::operator-(const Date& other) const {
 Date Date::addDuration(int amount, char type) const {
     Date result = *this;
     switch (std::tolower(type)) {
-    case 'd': case 'b':
+    case 'd': case 'b': case 'D': case 'B':
         result.dd += amount;
         break;
-    case 'm':
+    case 'm': case 'M':
         result.mm += amount;
         break;
-    case 'y':
+    case 'y': case 'Y':
         result.yyyy += amount;
         break;
     default:
@@ -150,7 +150,7 @@ Date Date::addDuration(int amount, char type) const {
 }
 
 // Utility for converting string duration to Date operation
-Date Date::addDuration(const std::string& duration) {
+Date Date::addDuration(const std::string& duration) const {
     int amount = std::stoi(duration.substr(0, duration.size() - 1));
     char type = duration.back();
     int sign = 1; // Default to addition
@@ -162,6 +162,12 @@ Date Date::addDuration(const std::string& duration) {
     }
 
     return addDuration(amount * sign, type);
+}
+
+Date Date::addDurationBusinessDay(const std::string& duration, const CalendarKey& calendar, const BusinessDayConv& business_day_conv) const
+{
+    Date unadjusted_date = this->addDuration(duration).businessDayAdjusted(calendar, business_day_conv);
+    return unadjusted_date;
 }
 
 Date Date::businessDayAdjusted(const CalendarKey& calendar, const BusinessDayConv& business_day_conv) {
@@ -209,7 +215,7 @@ Date Date::prevBusinessDay(const CalendarKey& calendar){
 
 Date Date::nextBusinessDay(const CalendarKey& calendar){
     Date adjusted_date = *this;
-    while (!(adjusted_date.isBusinessDay(calendar)))
+    while (!adjusted_date.isBusinessDay(calendar))
     {
         adjusted_date = adjusted_date.addDuration("1D");
     }
@@ -294,4 +300,30 @@ std::string Date::dateToString(const int& day, const int& month, const int& year
         << std::setw(2) << std::setfill('0') << month << "-"
         << year;
     return normalized_date.str();
+}
+
+std::string Date::dateToString(const Date& date) {
+    std::ostringstream normalized_date;
+    normalized_date << std::setw(2) << std::setfill('0') << date.dd << "-"
+        << std::setw(2) << std::setfill('0') << date.mm << "-"
+        << date.yyyy;
+    return normalized_date.str();
+}
+
+double Date::yearFraction(const Date& start_date, const Date& end_date, const DayCountConv& dcc)
+{
+    double year_frac = 0.0;
+    double days_between = end_date - start_date;
+    switch (dcc)
+    {
+    case DayCountConv::ACT360:
+        year_frac = days_between / 360.0;
+        break;
+    case DayCountConv::ACT365:
+        year_frac = days_between / 365.0;
+        break;
+    default:
+        break;
+    }
+    return year_frac;
 }

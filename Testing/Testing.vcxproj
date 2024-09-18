@@ -170,7 +170,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Testing.cpp" />
+    <ClCompile Include="TestingCurveModels.cpp" />
+    <ClCompile Include="TestingCurves.cpp" />
+    <ClCompile Include="TestingDates.cpp" />
+    <ClCompile Include="TestingInstruments.cpp" />
+    <ClCompile Include="TestingInterpolation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\instrument_data.h" />
