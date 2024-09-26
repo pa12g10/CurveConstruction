@@ -155,8 +155,10 @@
     <ClInclude Include="src\curve_models\RFRModel.h" />
     <ClInclude Include="src\instruments\InstrumentPricer.h" />
     <ClInclude Include="src\interpolators\Linear.h" />
+    <ClInclude Include="src\solver\ISolver.h" />
+    <ClInclude Include="src\solver\LevenbergMarquardt.h" />
     <ClInclude Include="src\utils\Date.h" />
-    <ClInclude Include="src\solver\Solve.h" />
+    <ClInclude Include="src\solver\CurveSolver.h" />
     <ClInclude Include="src\interpolators\CubicSpline.h" />
     <ClInclude Include="src\instruments\InstrumentSet.h" />
     <ClInclude Include="src\instruments\CBSwap.h" />
@@ -165,6 +167,7 @@
     <ClInclude Include="src\instruments\OISSwap.h" />
     <ClInclude Include="src\curves\Curve.h" />
     <ClInclude Include="src\curves\CurveSet.h" />
+    <ClInclude Include="src\utils\DateUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\CurveData.cpp" />
@@ -176,8 +179,10 @@
     <ClCompile Include="src\cashflows\CashflowScheduler.cpp" />
     <ClCompile Include="src\curve_models\RFRModel.cpp" />
     <ClCompile Include="src\interpolators\Interpolator.h" />
+    <ClCompile Include="src\solver\ISolver.cpp" />
+    <ClCompile Include="src\solver\LevenbergMarquardt.cpp" />
     <ClCompile Include="src\utils\Date.cpp" />
-    <ClCompile Include="src\solver\Solve.cpp" />
+    <ClCompile Include="src\solver\CurveSolver.cpp" />
     <ClCompile Include="src\interpolators\CubicSpline.cpp" />
     <ClCompile Include="src\instruments\InstrumentSet.cpp" />
     <ClCompile Include="src\instruments\CBSwap.cpp" />
@@ -187,6 +192,7 @@
     <ClCompile Include="src\curves\Curve.cpp" />
     <ClCompile Include="src\curves\CurveSet.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\utils\DateUtilities.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

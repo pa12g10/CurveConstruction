@@ -36,8 +36,8 @@ BusinessDayConv stringToBusinessDayConv(const std::string& s) {
 
 DayCountConv stringToDayCountConv(const std::string& s) {
     std::string upper = toUpper(s);
-    if (upper == "ACT365") return DayCountConv::ACT365;
-    if (upper == "ACT360") return DayCountConv::ACT360;
+    if (upper == "ACT365" || upper == "A365") return DayCountConv::ACT365;
+    if (upper == "ACT360" || upper == "A360") return DayCountConv::ACT360;
     return DayCountConv::NONE;
 }
 
@@ -65,4 +65,14 @@ CurveCategory stringToCurveCategory(const std::string& s) {
     if (upper == "EQUITY") return CurveCategory::EQUITY;
     if (upper == "CREDIT") return CurveCategory::CREDIT;
     return CurveCategory::NONE;
+}
+
+StubType stringToStubType(const std::string& s)
+{
+    std::string upper = toUpper(s);
+    if (upper == "SS" || upper == "SHORTSTART") return StubType::ShortStart;
+    if (upper == "LS" || upper == "LONGSTART") return StubType::LongStart;
+    if (upper == "SE" || upper == "SHORTEND") return StubType::ShortEnd;
+    if (upper == "LE" || upper == "LONGEND") return StubType::LongEnd;
+    return StubType::NONE;
 }

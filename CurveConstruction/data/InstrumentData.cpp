@@ -1,125 +1,174 @@
 #include "InstrumentData.h"
-
+// Market Rates taken from https://www.chathamfinancial.com/technology/European-market-rates with value date 19th September for Swaps, ON Deposit 17th September 
+ 
 
 VectorOfDictionaries ois_swap_instrument_data = {
 		{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "1Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.04258},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
 			{"PayDelay", "0B"},
-			{"ReferenceRate", "ON"}
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		},
 		{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "2Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03831},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		},
 		{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "3Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03663},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
 			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		},
-						{
-			{"InstrumentType", "OISSwap"},
-			{"StartDate", "0B"},
-			{"Maturity", "4Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
-			{"FixedLegDCC", "A365"},
-			{"FloatLegDCC", "A365"},
-			{"AccrualCalendar", "LON"},
-			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
-
-		},
-						{
+		{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "5Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03514},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		},
-						{
+	{
+			{"InstrumentType", "OISSwap"},
+			{"StartDate", "0B"},
+			{"Maturity", "7Y"},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03470},
+			{"FixedLegDCC", "A365"},
+			{"FloatLegDCC", "A365"},
+			{"AccrualCalendar", "LON"},
+			{"FixingCalendar", "LON"},
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
+
+		},
+		{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "10Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03506},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
-
-		},
-										{
-			{"InstrumentType", "OISSwap"},
-			{"StartDate", "0B"},
-			{"Maturity", "12Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
-			{"FixedLegDCC", "A365"},
-			{"FloatLegDCC", "A365"},
-			{"AccrualCalendar", "LON"},
-			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		},
 										{
 			{"InstrumentType", "OISSwap"},
 			{"StartDate", "0B"},
 			{"Maturity", "15Y"},
-			{"Fixedlegfrequency", "1Y"},
-			{"Floatlegfrequency", "1Y"},
-			{"Rate", 0.0342},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03616},
 			{"FixedLegDCC", "A365"},
 			{"FloatLegDCC", "A365"},
 			{"AccrualCalendar", "LON"},
 			{"FixingCalendar", "LON"},
-			{ "PayDelay", "0B" },
-			{"ReferenceRate", "ON"}
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
+
+		},
+										{
+			{"InstrumentType", "OISSwap"},
+			{"StartDate", "0B"},
+			{"Maturity", "30Y"},
+			{"FixedLegFrequency", "1Y"},
+			{"FloatLegFrequency", "1Y"},
+			{"Rate", 0.03648},
+			{"FixedLegDCC", "A365"},
+			{"FloatLegDCC", "A365"},
+			{"AccrualCalendar", "LON"},
+			{"FixingCalendar", "LON"},
+			{"PayDelay", "0B" },
+			{"ReferenceRate", "1D"},
+			{"Currency", "GBP"},
+			{"Exchange", "SONIA"},
+			{"RollConvention", "BEOM"},
+			{"BusinessDayConvention", "ModifiedFollowing"},
+			{"StubType", "SS"},
+			{"TargetCurveSpline" , "1D"}
 
 		}
 };
@@ -129,10 +178,18 @@ VectorOfDictionaries cash_instrument_data = {
 		{"InstrumentType", "Cash"},
 		{"StartDate", "0B"},
 		{"Maturity", "1B"},
-		{"Rate", 0.0342},
+		{"Rate", 0.0495},
 		{"FloatLegDCC", "A365"},
 		{"AccrualCalendar", "LON"},
-		{"FixingCalendar", "LON"}
+		{"FixingCalendar", "LON"},
+		{"PayDelay", "0B" },
+		{"ReferenceRate", "1D"},
+		{"Currency", "GBP"},
+		{"Exchange", "SONIA"},
+		{"RollConvention", "BEOM"},
+		{"BusinessDayConvention", "ModifiedFollowing"},
+		{"StubType", "SS"},
+		{"TargetCurveSpline" , "1D"}
 
 	}
 };

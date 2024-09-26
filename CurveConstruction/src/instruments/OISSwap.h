@@ -3,28 +3,30 @@
 
 #include "../src/instruments/InstrumentPricer.h"
 #include "../data/CustomTypes.h"
-#include "../src/utils/Date.h"
+#include "../src/cashflows/CashflowScheduler.h"
+#include "../src/utils/DateUtilities.h"
 
 #include <functional>
 
-using DictionaryOfFunctors = std::map<std::string, std::function<double(Date)>>;
+using DictionaryOfFunctors = std::map<std::string, std::function<double(int)>>;
 
 
-class OISSwap : public InstrumentPricer {
+class OISSwapPricer : public IInstrumentPricer {
 
 private:
 	VectorOfDictionaries instruments;
-	Date value_date;
+	int value_date;
 
 public:
 	
-	OISSwap(const Date& _value_date, VectorOfDictionaries& _ois_instruments);
+	OISSwapPricer(const int& _value_date, VectorOfDictionaries& _ois_instruments);
 
 	void setInstrumentMaturity(Dictionary& instrument);
 	VectorOfDictionaries getInstruments() { return instruments; };
 
-	std::vector <double> objectiveFunction() override;
-	Dictionary price(const Dictionary& instrument, const DictionaryOfFunctors& rates_map) override;
+	std::vector <double> objectiveFunction(DictionaryOfFunctors& _rates_map) override;
+	Dictionary getCurveKeys(Dictionary& instrument);
+	Dictionary price(Dictionary& instrument, DictionaryOfFunctors& _rates_map) override;
 
 
 };

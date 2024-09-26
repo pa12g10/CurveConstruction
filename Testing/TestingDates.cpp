@@ -6,8 +6,37 @@
 #include "../CurveConstruction/src/curve_models/RFRModel.h"
 #include "../CurveConstruction/data/CurveData.h"
 #include "../CurveConstruction/data/InstrumentData.h"
+#include <utils/DateUtilities.h>
 
+static std::string formatDate(int year, int month, int day) {
+	std::stringstream ss;
 
+	// Add the year as is
+	ss << year;
+
+	// Add the month with leading zero if needed
+	ss << std::setw(2) << std::setfill('0') << month;
+
+	// Add the day with leading zero if needed
+	ss << std::setw(2) << std::setfill('0') << day;
+
+	return ss.str();
+}
+
+std::string formatDateDDMMYYYY(int day, int month, int year) {
+	std::stringstream ss;
+
+	// Add the day with leading zero if needed
+	ss << std::setw(2) << std::setfill('0') << day << "-";
+
+	// Add the month with leading zero if needed
+	ss << std::setw(2) << std::setfill('0') << month << "-";
+
+	// Add the year as is
+	ss << year;
+
+	return ss.str();
+}
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
@@ -46,14 +75,17 @@ namespace TestingDates
 
 		TEST_METHOD(TestGenerateCashflowSchdule)
 		{
-			Date start_date = Date(10, 2, 2024);
-			Date end_date = start_date.addDuration("5Y");
-			string stub_type = "SS", frequency = "3M";
+			int start_date = 20240210; 
+			std::string pay_delay = "0B";
+			int end_date = DateUtilities::addDuration(start_date, "5Y");
+			string frequency = "3M";
 			CalendarKey calendar = CalendarKey::LON;
 			BusinessDayConv business_day_conv = BusinessDayConv::MOD_FOLLOWING;
 			RollConv roll_conv = RollConv::BEOM;
+			StubType stub_type = StubType::ShortStart;
 
-			vector<CashflowDates> cfs = CashflowScheduler::generateCashflows(start_date, end_date, calendar, stub_type, frequency, business_day_conv, roll_conv);
+			vector<CashflowDates> cfs = CashflowScheduler::generateCashflows(start_date, end_date, pay_delay, calendar, stub_type, frequency,
+				business_day_conv, roll_conv);
 			int cf_size = cfs.size();
 			Assert::AreEqual(20, cf_size);
 		}
@@ -79,326 +111,185 @@ namespace TestingDates
 	TEST_CLASS(Dates)
 	{
 	public:
+	
 
-		TEST_METHOD(TestDateStringToDate)
+		TEST_METHOD(TestDifferenceBetweenTwoDatesEx1)
 		{
-			string date_str = "11-01-2022";
-			Date date = Date(date_str);
-
-			Assert::AreEqual(11, date.dd);
-			Assert::AreEqual(1, date.mm);
-			Assert::AreEqual(2022, date.yyyy);
-
-
-			string date_str_2 = "11/11/2024";
-			Date date2 = Date(date_str_2);
-
-			Assert::AreEqual(11, date2.dd);
-			Assert::AreEqual(11, date2.mm);
-			Assert::AreEqual(2024, date2.yyyy);
-
+			int earlier_date = 20010101;
+			int later_date= 20010102;
+			int result = DateUtilities::subtractDates(later_date, earlier_date);
+			Assert::AreEqual(1, result);
 
 		}
 
-		TEST_METHOD(TestDifferenceBetweenTwoDates)
+		TEST_METHOD(TestDifferenceBetweenTwoDatesEx2)
 		{
-			Date date1 = Date(1, 1, 2001);
-			Date date2 = Date(2, 1, 2001);
-			int result = date2 - date1;
-			Assert::AreEqual(1, result);
+			int earlier_date = 20210302;
+			int later_date = 20230101;
+			int result = DateUtilities::subtractDates(later_date, earlier_date);
+			Assert::AreEqual(670, result);
 
 		}
 
 		TEST_METHOD(TestGetCalendars)
 		{
-			std::unordered_map <std::string, std::string> lon_cal = Calendar::get(CalendarKey::LON);
+			std::map <int, std::string> lon_cal = Calendar::get(CalendarKey::LON);
 			size_t result_len = 625;
 			Assert::AreEqual(result_len, lon_cal.size());
 
-			std::unordered_map <std::string, std::string> us_cal = Calendar::get(CalendarKey::USD);
+			std::map <int, std::string> us_cal = Calendar::get(CalendarKey::USD);
 			result_len = 710;
 			Assert::AreEqual(result_len, us_cal.size());
 
-			std::unordered_map <std::string, std::string> eur_cal = Calendar::get(CalendarKey::EUR);
+			std::map <int, std::string> eur_cal = Calendar::get(CalendarKey::EUR);
 			result_len = 497;
 			Assert::AreEqual(result_len, eur_cal.size());
 
 
-			auto holiday = "26-12-2024";
+			auto holiday = 20241226;
 			auto iterator = lon_cal.find(holiday);
 			bool isHoliday = (iterator != lon_cal.end()) ?  true : false;
 			Assert::AreEqual(true, isHoliday);
 
-			auto not_holiday = "27-12-2024";
+			auto not_holiday = 20241227;
 			iterator = lon_cal.find(not_holiday);
 			isHoliday = (iterator != lon_cal.end()) ? true : false;
 			Assert::AreEqual(false, isHoliday);
-
-
-
 		}
 
-
-		TEST_METHOD(TestDateGreaterThanOperator)
-		{
-			Date date1 = Date(1, 1, 2001);
-			Date date2 = Date(2, 1, 2001);
-			bool result =  date2 > date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2001);
-			date2 = Date(1, 2, 2001);
-			result = date2 > date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2001);
-			date2 = Date(1, 1, 2002);
-			result = date2 > date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2002);
-			date2 = Date(1, 1, 2002);
-			result = date2 > date1;
-			Assert::AreEqual(false, result);
-		}
-
-		TEST_METHOD(TestDateLessThanOperator)
-		{
-			Date date1 = Date(2, 1, 2001);
-			Date date2 = Date(1, 1, 2001);
-			bool result = date2 < date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 2, 2001);
-			date2 = Date(1, 1, 2001);
-			result = date2 < date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2002);
-			date2 = Date(1, 1, 2001);
-			result = date2 < date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2002);
-			date2 = Date(1, 1, 2002);
-			result = date2 < date1;
-			Assert::AreEqual(false, result);
-		}
-
-		TEST_METHOD(TestDateEqualOperator)
-		{
-			Date date1 = Date(1, 1, 2001);
-			Date date2 = Date(1, 1, 2001);
-			bool result = date2 == date1;
-			Assert::AreEqual(true, result);
-		}
-
-		TEST_METHOD(TestDateNotEqualOperator)
-		{
-			Date date1 = Date(1, 1, 2001);
-			Date date2 = Date(2, 1, 2001);
-			bool result = date2 != date1;
-			Assert::AreEqual(true, result);
-		}
-
-		TEST_METHOD(TestDateGreaterThanEqualOperator)
-		{
-			Date date1 = Date(1, 1, 2001);
-			Date date2 = Date(2, 1, 2001);
-			bool result = date2 >= date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2001);
-			date2 = Date(1, 1, 2001);
-			result = date2 >= date1;
-			Assert::AreEqual(true, result);
-		}
-
-		TEST_METHOD(TestDateLessThanEqualOperator)
-		{
-			Date date1 = Date(2, 1, 2001);
-			Date date2 = Date(1, 1, 2001);
-			bool result = date2 <= date1;
-			Assert::AreEqual(true, result);
-
-			date1 = Date(1, 1, 2001);
-			date2 = Date(1, 1, 2001);
-			result = date2 <= date1;
-			Assert::AreEqual(true, result);
-		}
-
-		/*TEST_METHOD(TestDateToString)
-		{
-			string date_str = "11-01-2022";
-			Date date = Date(date_str);
-			Assert::AreEqual(date_str, date.toString());
-		}*/
-
-		/*TEST_METHOD(TestDateDurationTypeNotRecognised)
-		{
-			string date_str = "11-01-2022";
-			Date date = Date(date_str);
-			string duration = "3Q";
-			auto add_duration_func = [date, duration](){Date::addDurationToDate(date, duration);};
-		}*/
 
 		TEST_METHOD(TestAddDurationToDate)
 		{
-			string date_str = "27-02-2022";
-			Date date = Date(date_str);
-
+			int  date = 20220227;
 			string tenor_3D = "3D";
-			Date new_date_plus_3D = date.addDuration(tenor_3D);
+			int new_date_plus_3D = DateUtilities::addDuration(date, tenor_3D);
 
-			Assert::AreEqual(2, new_date_plus_3D.dd);
-			Assert::AreEqual(3, new_date_plus_3D.mm);
-			Assert::AreEqual(2022, new_date_plus_3D.yyyy);
+			Assert::AreEqual(20220302, new_date_plus_3D);
 
 
 			string tenor_3M = "3M";
-			Date new_date_plus_3M = date.addDuration(tenor_3M);
+			int new_date_plus_3M = DateUtilities::addDuration(date, tenor_3M);
 
-			Assert::AreEqual(27, new_date_plus_3M.dd);
-			Assert::AreEqual(5, new_date_plus_3M.mm);
-			Assert::AreEqual(2022, new_date_plus_3M.yyyy);
+			Assert::AreEqual(20220527, new_date_plus_3M);
 
 			string tenor_12M = "12M";
-			Date new_date_plus_12M = date.addDuration(tenor_12M);
+			int new_date_plus_12M = DateUtilities::addDuration(date, tenor_12M);
 
-			Assert::AreEqual(27, new_date_plus_12M.dd);
-			Assert::AreEqual(2, new_date_plus_12M.mm);
-			Assert::AreEqual(2023, new_date_plus_12M.yyyy);
+			Assert::AreEqual(20230227, new_date_plus_12M);
+
+			string tenor_1Y = "1Y";
+			int new_date_plus_1Y = DateUtilities::addDuration(date, tenor_1Y);
+
+			Assert::AreEqual(20230227, new_date_plus_1Y);
 
 			// Leap Year 
 			// Add days
-			string date_pre_leap_year_str = "20-11-1999";
-			Date date_pre_leap_year = Date(date_pre_leap_year_str);
-
+			int date_pre_leap_year = 19991120;
 			string tenor_101D = "101D";
-			Date new_date_plus_101D = date_pre_leap_year.addDuration(tenor_101D);
+			int new_date_plus_101D = DateUtilities::addDuration(date_pre_leap_year, tenor_101D);
 
-			Assert::AreEqual(29, new_date_plus_101D.dd);
-			Assert::AreEqual(2, new_date_plus_101D.mm);
-			Assert::AreEqual(2000, new_date_plus_101D.yyyy);
+			Assert::AreEqual(20000229, new_date_plus_101D);
 
 			// Add Months
-			date_pre_leap_year_str = "29-11-1999";
-			date_pre_leap_year = Date(date_pre_leap_year_str);
+			date_pre_leap_year = 19991129; 
+			new_date_plus_3M = DateUtilities::addDuration(date_pre_leap_year, tenor_3M);
 
-			new_date_plus_3M = date_pre_leap_year.addDuration(tenor_3M);
-
-			Assert::AreEqual(29, new_date_plus_3M.dd);
-			Assert::AreEqual(2, new_date_plus_3M.mm);
-			Assert::AreEqual(2000, new_date_plus_3M.yyyy);
+			Assert::AreEqual(20000229, new_date_plus_3M);
 
 			//Add Years
-			string date_leap_year_str = "29-02-1996";
-			Date date_leap_year = Date(date_leap_year_str);
+			int date_leap_year_str = 19960229;
 			string tenor_4Y = "4Y";
+			int new_date_plus_4Y = DateUtilities::addDuration(date_leap_year_str, tenor_4Y);
 
-			Date new_date_plus_4Y = date_leap_year.addDuration(tenor_4Y);
-
-			Assert::AreEqual(29, new_date_plus_4Y.dd);
-			Assert::AreEqual(2, new_date_plus_4Y.mm);
-			Assert::AreEqual(2000, new_date_plus_4Y.yyyy);
+			Assert::AreEqual(20000229, new_date_plus_4Y);
 
 		}
 
 		TEST_METHOD(TestSubtractDurationToDate)
 		{
-			string date_str = "27-02-2022";
-			Date date = Date(date_str);
+			int date = 20220227;
+			int new_date_minus5D = DateUtilities::addDuration(date, "-5D");
+			Assert::AreEqual(20220222, new_date_minus5D);
 
-			Date new_date_minus5D = date.addDuration("-5D");
+			date = 20220101;
+			new_date_minus5D = DateUtilities::addDuration(date, "-5D");
+			Assert::AreEqual(20211227, new_date_minus5D);
 
-			Assert::AreEqual(22, new_date_minus5D.dd);
-			Assert::AreEqual(2, new_date_minus5D.mm);
-			Assert::AreEqual(2022, new_date_minus5D.yyyy);
+			date = 20040229;
+			int new_date_minus36M = DateUtilities::addDuration(date, "-36M");
+			Assert::AreEqual(20010301, new_date_minus36M);
 
-			date_str = "01-01-2022";
-			date = Date(date_str);
 
-			new_date_minus5D = date.addDuration("-5D");
+			date = 20041231;
+			int new_date_minus1M = DateUtilities::addDuration(date, "-1M");
+			Assert::AreEqual(20041130, new_date_minus1M);
 
-			Assert::AreEqual(27, new_date_minus5D.dd);
-			Assert::AreEqual(12, new_date_minus5D.mm);
-			Assert::AreEqual(2021, new_date_minus5D.yyyy);
-
-			date_str = "29-02-2004";
-			date = Date(date_str);
-
-			Date new_date_minus24M = date.addDuration("-36M");
-
-			Assert::AreEqual(1, new_date_minus24M.dd);
-			Assert::AreEqual(3, new_date_minus24M.mm);
-			Assert::AreEqual(2001, new_date_minus24M.yyyy);
-
+			date = 20020331;
+			int new_date_minus13M = DateUtilities::addDuration(date, "-13M");
+			Assert::AreEqual(20010228, new_date_minus13M);
 		}
 
 		TEST_METHOD(TestWeekendHolidayDates)
 		{
-			Date saturday = Date("7-9-2024");
-			Date sunday = Date("8-9-2024");
-			Date monday = Date("16-10-2023");
-			Date tuesday = Date("17-10-2023");
+			int saturday = 20240907; 
+			int sunday = 20240908; 
+			int monday = 20231016; 
+			int tuesday = 20231017; 
 
-			bool isSatWeekend = saturday.isWeekend();
-			bool isSunWeekend = sunday.isWeekend();
+			Assert::AreEqual(true, DateUtilities::isWeekend(saturday));
+			Assert::AreEqual(true, DateUtilities::isWeekend(sunday));
+			Assert::AreEqual(false, DateUtilities::isWeekend(monday));
+			Assert::AreEqual(false, DateUtilities::isWeekend(tuesday));
 
-			Assert::AreEqual(true, saturday.isWeekend());
-			Assert::AreEqual(true, sunday.isWeekend());
-			Assert::AreEqual(false, monday.isWeekend());
-			Assert::AreEqual(false, tuesday.isWeekend());
-
-			Date xmas_date = Date("25-12-2023");
-			Date jan_1st_date = Date("1-1-2024");
-			Assert::AreEqual(true, xmas_date.isHoliday(CalendarKey::LON));
-			Assert::AreEqual(true, jan_1st_date.isHoliday(CalendarKey::LON));
+			int xmas_date = 20231225; 
+			int jan_1st_date = 20240101; 
+			Assert::AreEqual(true, DateUtilities::isHoliday(xmas_date, CalendarKey::LON));
+			Assert::AreEqual(true, DateUtilities::isHoliday(jan_1st_date, CalendarKey::LON));
 		}
 
 		TEST_METHOD(TestIsBusinessDay)
 		{
-			Date saturday = Date("7-9-2024");
-			Date xmas_date = Date("25-12-2023");
-			Date jan_1st_date = Date("1-1-2024");
-			Date jan_2nd_date = Date("2-1-2024");
+			int saturday = 20240907; 
+			int xmas_date = 20231225; 
+			int jan_1st_date = 20240101; 
+			int jan_2nd_date = 20240102; 
 
-			Assert::AreEqual(false, saturday.isBusinessDay(CalendarKey::LON));
-			Assert::AreEqual(false, xmas_date.isBusinessDay(CalendarKey::LON));
-			Assert::AreEqual(false, jan_1st_date.isBusinessDay(CalendarKey::LON));
-			Assert::AreEqual(true, jan_2nd_date.isBusinessDay(CalendarKey::LON));
+			Assert::AreEqual(false, DateUtilities::isBusinessDay(saturday, CalendarKey::LON));
+			Assert::AreEqual(false, DateUtilities::isBusinessDay(xmas_date, CalendarKey::LON));
+			Assert::AreEqual(false, DateUtilities::isBusinessDay(jan_1st_date, CalendarKey::LON));
+			Assert::AreEqual(true, DateUtilities::isBusinessDay(jan_2nd_date, CalendarKey::LON));
 
 		}
 
 		TEST_METHOD(TestBusinessDayConventionAdjustments)
 		{
-			Date saturday = Date("7-9-2024");
-			Date monday_9th = Date("9-9-2024");
-			Date friday_6th = Date("6-9-2024");
+			int saturday = 20240907; 
+			int monday_9th = 20240909; 
+			int friday_6th = 20240906; 
 			
 
-			Date next_bizz_day = saturday.businessDayAdjusted(CalendarKey::LON, BusinessDayConv::FOLLOWING);
-			Assert::AreEqual(monday_9th.date_str, next_bizz_day.date_str);
+			int next_bizz_day = DateUtilities::businessDayAdjusted(saturday, CalendarKey::LON, BusinessDayConv::FOLLOWING);
+			Assert::AreEqual(monday_9th, next_bizz_day);
 
-			Date prev_bizz_day = saturday.businessDayAdjusted(CalendarKey::LON, BusinessDayConv::PRECEDING);
-			Assert::AreEqual(friday_6th.date_str, prev_bizz_day.date_str);
+			int prev_bizz_day = DateUtilities::businessDayAdjusted(saturday, CalendarKey::LON, BusinessDayConv::PRECEDING);
+			Assert::AreEqual(friday_6th, prev_bizz_day);
 
 
-			Date eom_1B_prior_date = Date("31-08-2024");
-			Date bom_1B_post_date = Date("01-09-2024");
-			Date mod_follow_eom_date = Date("30-08-2024");
-			Date mod_prec_eom_date = Date("02-09-2024");
+			int eom_1B_prior_date = 20240831; 
+			int bom_1B_post_date = 20240901; 
+			int mod_follow_eom_date = 20240830; 
+			int mod_prec_eom_date = 20240902; 
 
-			next_bizz_day = eom_1B_prior_date.businessDayAdjusted(CalendarKey::LON, BusinessDayConv::MOD_FOLLOWING);
-			Assert::AreEqual(mod_follow_eom_date.date_str, next_bizz_day.date_str);
+			next_bizz_day = DateUtilities::businessDayAdjusted(eom_1B_prior_date, CalendarKey::LON, BusinessDayConv::MOD_FOLLOWING);
+			Assert::AreEqual(mod_follow_eom_date, next_bizz_day);
 
-			prev_bizz_day = bom_1B_post_date.businessDayAdjusted(CalendarKey::LON, BusinessDayConv::MOD_PRECEDING);
-			Assert::AreEqual(mod_prec_eom_date.date_str, prev_bizz_day.date_str);
+			prev_bizz_day = DateUtilities::businessDayAdjusted(bom_1B_post_date, CalendarKey::LON, BusinessDayConv::MOD_PRECEDING);
+			Assert::AreEqual(mod_prec_eom_date, prev_bizz_day);
 
-			Date xmas_date = Date("26-12-2023");
-			Date next_date_after_xmas = Date("27-12-2023");
-			next_bizz_day = xmas_date.businessDayAdjusted(CalendarKey::LON, BusinessDayConv::FOLLOWING);
-			Assert::AreEqual(next_date_after_xmas.date_str, next_bizz_day.date_str);
+			int xmas_date = 20231226; 
+			int next_date_after_xmas = 20231227; 
+			next_bizz_day = DateUtilities::businessDayAdjusted(xmas_date, CalendarKey::LON, BusinessDayConv::FOLLOWING);
+			Assert::AreEqual(next_date_after_xmas, next_bizz_day);
 			
 		}
 

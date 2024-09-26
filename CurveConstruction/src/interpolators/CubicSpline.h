@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include "Interpolator.h"
 
-class CubicSpline : public Interpolator {
+class CubicSpline : public IInterpolator {
 public:
 
     CubicSpline(const std::vector<double>& _times, const std::vector<double>& _values);

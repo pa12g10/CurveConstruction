@@ -3,11 +3,11 @@
 
 #include "../data/CustomTypes.h"
 
-class Interpolator {
+class IInterpolator {
 public:
     virtual double interpolate(double t) const = 0;
     virtual void setValues(const std::vector<double>& _times, const std::vector<double>& _values) = 0;
-    virtual ~Interpolator() = default;
+    virtual ~IInterpolator() = default;
 };
 
 #endif // INTERPOLATOR_H

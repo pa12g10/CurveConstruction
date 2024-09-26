@@ -39,7 +39,7 @@
     <ClInclude Include="src\interpolators\CubicSpline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\solver\Solve.h">
+    <ClInclude Include="src\solver\CurveSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="data\InstrumentData.h">
@@ -61,6 +61,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\instruments\InstrumentPricer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\DateUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solver\LevenbergMarquardt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solver\ISolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,7 +101,7 @@
     <ClCompile Include="src\interpolators\CubicSpline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\solver\Solve.cpp">
+    <ClCompile Include="src\solver\CurveSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Date.cpp">
@@ -123,6 +132,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="data\Enums.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\DateUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solver\LevenbergMarquardt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solver\ISolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

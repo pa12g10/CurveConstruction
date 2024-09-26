@@ -4,7 +4,7 @@
 #include "../src/instruments/InstrumentPricer.h"
 #include "../data/CustomTypes.h"
 
-class Cash : public InstrumentPricer {
+class Cash : public IInstrumentPricer {
 
 private:
 	VectorOfDictionaries instruments;

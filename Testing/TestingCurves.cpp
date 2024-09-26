@@ -9,6 +9,9 @@
 #include <interpolators/Linear.h>
 #include <interpolators/CubicSpline.h>
 #include <curves/CurveSet.h>
+#include <instruments/OISSwap.h>
+#include "../CurveConstruction/data/InstrumentData.h"
+#include <solver/Solver.h>
 
 
 
@@ -24,8 +27,8 @@ namespace TestingCurves
 
 		TEST_METHOD(TestCreateCurve)
 		{
-			Date curve_date = Date(12, 9, 2024);
-			std::string tenor = "1D", currency = "GBP", exchange = "LIBOR";
+			int curve_date = 20240912;
+			std::string tenor = "1D", currency = "GBP", exchange = "SONIA";
 			CalendarKey calendar_key = CalendarKey::LON;
 			BusinessDayConv bdc = BusinessDayConv::MOD_FOLLOWING;
 			DayCountConv dcc = DayCountConv::ACT365;
@@ -41,8 +44,8 @@ namespace TestingCurves
 
 		TEST_METHOD(TestSetCurveInterpolators)
 		{
-			Date curve_date = Date(12, 9, 2024);
-			std::string tenor = "1D", currency = "GBP", exchange = "LIBOR";
+			int curve_date = 20240912; 
+			std::string tenor = "1D", currency = "GBP", exchange = "SONIA";
 			CalendarKey calendar_key = CalendarKey::LON;
 			BusinessDayConv bdc = BusinessDayConv::MOD_FOLLOWING;
 			DayCountConv dcc = DayCountConv::ACT365;
@@ -56,7 +59,7 @@ namespace TestingCurves
 			std::vector<double> y_vals{ 1.0 , .93, .915, .89, 0.87, 0.82, .79};
 
 			std::vector<double> seperation_points{1.0};
-			std::vector<std::shared_ptr<Interpolator>> interpolators;
+			std::vector<std::shared_ptr<IInterpolator>> interpolators;
 
 			//// Create instances of interpolators
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
@@ -66,9 +69,13 @@ namespace TestingCurves
 			curve.set_seperationPoints(seperation_points);
 			curve.set_interpolators(interpolators);
 		
-			double df1 = curve(Date(12, 9, 2024));
-			double df2 = curve(Date(12, 9, 2025));
-			double df3 = curve(Date(12, 9, 2026));
+			int date1 = 20240912;
+			int date2 = 20250912;
+			int date3 = 20260912;
+
+			double df1 = curve(date1);
+			double df2 = curve(date2);
+			double df3 = curve(date3);
 
 			Assert::AreEqual(1.0, df1);
 			Assert::AreEqual(.87, df2);
@@ -78,8 +85,8 @@ namespace TestingCurves
 
 		TEST_METHOD(TestCreateCurvesetSingleCurve)
 		{
-			Date curve_date = Date(12, 9, 2024);
-			std::string currency = "GBP", exchange = "LIBOR";
+			int curve_date = 20240912; 
+			std::string currency = "GBP", exchange = "SONIA";
 			CalendarKey calendar_key = CalendarKey::LON;
 			BusinessDayConv bdc = BusinessDayConv::MOD_FOLLOWING;
 			DayCountConv dcc = DayCountConv::ACT365;
@@ -91,7 +98,7 @@ namespace TestingCurves
 			std::vector<double> y_vals{ 1.0 , .93, .915, .89, 0.87, 0.82, .79 };
 
 			std::vector<double> seperation_points{ 1.0 };
-			std::vector<std::shared_ptr<Interpolator>> interpolators;
+			std::vector<std::shared_ptr<IInterpolator>> interpolators;
 
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
@@ -102,16 +109,16 @@ namespace TestingCurves
 			CurveSet curve_set = CurveSet({ curve });
 			curve_set.configureRateMapping();
 
-			Date date = Date(10, 1, 2025);
+			int date = 20250110; 
 			auto& rate_functor_map = curve_set.get_rate_functor_map();
-			auto df = rate_functor_map["IR_GBP_LIBOR_1D_DF"](date);
-			auto fwd = rate_functor_map["IR_GBP_LIBOR_1D_FWD"](date);
+			auto df = rate_functor_map["IR_GBP_SONIA_1D_DF"](date);
+			auto fwd = rate_functor_map["IR_GBP_SONIA_1D_FWD"](date);
 
 			std::string result;
 			{
 				std::stringstream ss;
-				ss << date.date_str << "," << std::fixed << df << "\n";
-				ss << date.date_str << "," << std::fixed << fwd << "\n";
+				ss << DateUtilities::toString(date) << "," << std::fixed << df << "\n";
+				ss << DateUtilities::toString(date) << "," << std::fixed << fwd << "\n";
 				result = ss.str();
 				Logger::WriteMessage(result.c_str());
 			}
@@ -121,8 +128,8 @@ namespace TestingCurves
 
 		TEST_METHOD(TestCreateCurvesetMultiCurve)
 		{
-			Date curve_date = Date(12, 9, 2024);
-			std::string currency = "GBP", exchange = "LIBOR";
+			int curve_date = 20240912;  
+			std::string currency = "GBP", exchange = "SONIA";
 			CalendarKey calendar_key = CalendarKey::LON;
 			BusinessDayConv bdc = BusinessDayConv::MOD_FOLLOWING;
 			DayCountConv dcc = DayCountConv::ACT365;
@@ -140,7 +147,7 @@ namespace TestingCurves
 			std::vector<double> y_vals{ 1.0 , .93, .915, .89, 0.87, 0.82, .79 };
 
 			std::vector<double> seperation_points{ 1.0 };
-			std::vector<std::shared_ptr<Interpolator>> interpolators;
+			std::vector<std::shared_ptr<IInterpolator>> interpolators;
 
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
@@ -155,21 +162,80 @@ namespace TestingCurves
 			CurveSet curve_set = CurveSet(curves);
 			curve_set.configureRateMapping();
 
-			Date date = Date(10, 1, 2025);
+			int date = 20250110; 
 			auto& rate_functor_map = curve_set.get_rate_functor_map();
-			auto df = rate_functor_map["IR_GBP_LIBOR_1D_DF"](date);
-			auto fwd = rate_functor_map["IR_GBP_LIBOR_1D_FWD"](date);
+			auto df = rate_functor_map["IR_GBP_SONIA_1D_DF"](date);
+			auto fwd = rate_functor_map["IR_GBP_SONIA_1D_FWD"](date);
 
 			std::string result;
 			{
 				std::stringstream ss;
-				ss << date.date_str << "," << std::fixed << df << "\n";
-				ss << date.date_str << "," << std::fixed << fwd << "\n";
+				ss << DateUtilities::toString(date) << "," << std::fixed << df << "\n";
+				ss << DateUtilities::toString(date) << "," << std::fixed << fwd << "\n";
 				result = ss.str();
 				Logger::WriteMessage(result.c_str());
 			}
+		}
 
+		TEST_METHOD(TestCurveSolver) {
+
+			// Instrument Set Up
+			int curve_date = 20240912;
+			auto ois_swap_set = OISSwapPricer(curve_date, ois_swap_instrument_data);
+			auto ois_swap_instruments = ois_swap_set.getInstruments();
+
+			std::vector<double> x_vals;
+			std::vector<double> y_vals;
+
+			for (auto& instrument : ois_swap_instruments)
+			{
+				int maturity_date = getValueFromVariant<int>(instrument["MaturityDate"]);
+				double knot_year_fraction = DateUtilities::yearFraction(curve_date, maturity_date, DayCountConv::ACT365);
+				x_vals.push_back(knot_year_fraction);
+				y_vals.push_back(0.03);
+				std::string result;
+				{
+					std::stringstream ss;
+					ss << knot_year_fraction<< "\n";
+					result = ss.str();
+					Logger::WriteMessage(result.c_str());
+				}
+			}
+
+			// Need to fix
+			std::vector<std::shared_ptr<IInstrumentPricer>> instrument_set_pricers;
+
+			//// Create instances of interpolators
+			instrument_set_pricers.push_back(std::make_shared<OISSwapPricer>(ois_swap_set));
+			InstrumentSet instrument_set = InstrumentSet(instrument_set_pricers);
+
+			// Curve Set Up
+			std::string currency = "GBP", exchange = "SONIA";
+			CalendarKey calendar_key = CalendarKey::LON;
+			BusinessDayConv bdc = BusinessDayConv::MOD_FOLLOWING;
+			DayCountConv dcc = DayCountConv::ACT365;
+			CurveCategory curve_category = CurveCategory::IR;
+			CurveType curve_type = CurveType::DISCOUNT;
+			Curve curve = Curve(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
+
+			std::vector<double> seperation_points{ 2.0 };
+			std::vector<std::shared_ptr<IInterpolator>> interpolators;
+
+			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
+			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
+			curve.set_knotPoints(x_vals, y_vals);
+			curve.set_seperationPoints(seperation_points);
+			curve.set_interpolators(interpolators);
+
+			CurveSet curve_set = CurveSet({ curve });
+			curve_set.configureRateMapping();
+			auto& rate_functor_map = curve_set.get_rate_functor_map();
+
+			// Solver 
+
+			Solver solver = Solver(instrument_set, curve_set, "LM", 1e-12);
 
 		}
+
 	};
 }

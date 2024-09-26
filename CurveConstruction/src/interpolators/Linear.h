@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-class LinearInterpolator : public Interpolator {
+class LinearInterpolator : public IInterpolator {
 public:
 
     LinearInterpolator(const std::vector<double>& _times, const std::vector<double>& _values)

@@ -2,9 +2,12 @@
 #include "CppUnitTest.h"
 #include "../CurveConstruction/src/curves/Curve.h"
 #include "../CurveConstruction/data/CustomTypes.h"
+#include "../CurveConstruction/data/InstrumentData.h"
+#include "../CurveConstruction/data/CurveData.h"
 
 #include <sstream>
 #include <iomanip> // for std::fixed, std::setprecision
+#include <curve_models/RFRModel.h>
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -17,7 +20,7 @@ namespace TestingCurveModels
 	{
 	public:
 
-		/*TEST_METHOD(TestRFRModel)
+		TEST_METHOD(TestRFRModel)
 		{
 			std::map<std::string, DictionaryOfVectors> curve_data = rfr_model_curve_data;
 			std::vector<VectorOfDictionaries> instrument_data = {
@@ -26,6 +29,6 @@ namespace TestingCurveModels
 				cbswap_instrument_data
 			};
 			RFRModel rfr_model = RFRModel(instrument_data, curve_data);
-		}*/
+		}
 	};
 }

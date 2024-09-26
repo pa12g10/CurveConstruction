@@ -1,9 +1,9 @@
 #include "Curve.h"
 #include <memory>
 
-Curve::Curve(const Date& _curve_date, const std::string& _tenor, const std::string& _currency, const std::string& _exchange, const CalendarKey& _calendar_key,
-	const BusinessDayConv _bdc, const DayCountConv _dcc, const CurveCategory _curve_category, const CurveType _curve_type,
-	const CurveSplineType _curve_spline_type)
+Curve::Curve(const int& _curve_date, const std::string& _tenor, const std::string& _currency, const std::string& _exchange, const CalendarKey& _calendar_key,
+	const BusinessDayConv& _bdc, const DayCountConv& _dcc, const CurveCategory& _curve_category, const CurveType& _curve_type,
+	const CurveSplineType& _curve_spline_type)
 	: curve_date(_curve_date), tenor(_tenor), currency(_currency), exchange(_exchange), calendar_key(_calendar_key), bdc(_bdc), dcc(_dcc),
 	curve_category(_curve_category), curve_type(_curve_type), curve_spline_type(_curve_spline_type)
 {
@@ -12,9 +12,9 @@ Curve::Curve(const Date& _curve_date, const std::string& _tenor, const std::stri
 }
 
 
-double Curve::operator()(const Date& date)
+double Curve::operator()(const int& date)
 {
-	double t = Date::yearFraction(curve_date, date, dcc);
+	double t = DateUtilities::yearFraction(curve_date, date, dcc);
 	return this->operator()(t);
 }
 
@@ -33,6 +33,5 @@ double Curve::operator()(const double& t)
 	curve_values[t] = interpolators[index]->interpolate(t);
 
 	return curve_values[t];
-
 }
 
