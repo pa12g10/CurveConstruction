@@ -25,12 +25,6 @@ void OISSwapPricer::setInstrumentMaturity(Dictionary& instrument) {
     instrument["EffectiveDate"] = effective_date;
 }
 
-std::vector<double> OISSwapPricer::objectiveFunction(DictionaryOfFunctors& _rates_map)
-{
-
-    return std::vector<double>();
-}
-
 Dictionary OISSwapPricer::getCurveKeys(Dictionary& instrument) {
     Dictionary curve_codes = Dictionary();
     auto exchange = getValueFromVariant<std::string>(instrument["Exchange"]);
@@ -101,4 +95,17 @@ Dictionary OISSwapPricer::price(Dictionary& instrument, DictionaryOfFunctors& ra
     results["PV"] = pv;
 
     return results;
+}
+
+std::vector<double> OISSwapPricer::objectiveFunction(DictionaryOfFunctors& _rates_map)
+{
+    auto residulals = std::vector<double>();
+    for (auto& instrument : instruments) {
+        auto instrument_results = this->price(instrument, _rates_map);
+        double par_rate = getValueFromVariant<double>(instrument["Rate"]);
+        double calc_par_rate = getValueFromVariant<double>(instrument_results["CalculatedRate"]);
+        double residual = par_rate - calc_par_rate;
+        residulals.push_back(residual);
+    }
+    return residulals;
 }

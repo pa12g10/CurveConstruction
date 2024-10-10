@@ -1,17 +1,15 @@
-#ifndef ISOLVE_H
+#ifndef ISOLVER_H
 #define ISOLVER_H
 
-#include "vector"
-#include "../src/curves/CurveSet.h" 
+#include <vector>
 
+class ISolver {
 
-class ISolver
-{
 public:
-	virtual vector<double> operator()(std::vector<double>& _initial_guess) = 0;
-	virtual  std::vector<double> objectiveFunction(std::vector<double>& _initial_guess) = 0;
-	virtual  std::vector<double> solve(std::vector<double>& _initial_guess) = 0;
+	virtual void solve() = 0;
+	virtual std::vector<double> objectiveFunction(std::vector<double> guess) = 0;
 	virtual ~ISolver() = default;
+
 };
 
 #endif // ISOLVER_H

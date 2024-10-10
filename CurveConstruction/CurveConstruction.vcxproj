@@ -156,6 +156,7 @@
     <ClInclude Include="src\instruments\InstrumentPricer.h" />
     <ClInclude Include="src\interpolators\Linear.h" />
     <ClInclude Include="src\solver\ISolver.h" />
+    <ClInclude Include="src\solver\ISolverAlgorithm.h" />
     <ClInclude Include="src\solver\LevenbergMarquardt.h" />
     <ClInclude Include="src\utils\Date.h" />
     <ClInclude Include="src\solver\CurveSolver.h" />
@@ -179,7 +180,6 @@
     <ClCompile Include="src\cashflows\CashflowScheduler.cpp" />
     <ClCompile Include="src\curve_models\RFRModel.cpp" />
     <ClCompile Include="src\interpolators\Interpolator.h" />
-    <ClCompile Include="src\solver\ISolver.cpp" />
     <ClCompile Include="src\solver\LevenbergMarquardt.cpp" />
     <ClCompile Include="src\utils\Date.cpp" />
     <ClCompile Include="src\solver\CurveSolver.cpp" />

@@ -4,14 +4,15 @@
 
 #include <sstream>
 #include <iomanip> // for std::fixed, std::setprecision
-
+#include <memory>
 
 #include <interpolators/Linear.h>
 #include <interpolators/CubicSpline.h>
 #include <curves/CurveSet.h>
 #include <instruments/OISSwap.h>
 #include "../CurveConstruction/data/InstrumentData.h"
-#include <solver/Solver.h>
+#include "../CurveConstruction/src/instruments/InstrumentSet.h"
+#include <solver/CurveSolver.h>
 
 
 
@@ -92,7 +93,7 @@ namespace TestingCurves
 			DayCountConv dcc = DayCountConv::ACT365;
 			CurveCategory curve_category = CurveCategory::IR;
 			CurveType curve_type = CurveType::DISCOUNT;
-			Curve curve = Curve(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
+			auto curve = std::make_shared<Curve>(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
 			
 			std::vector<double> x_vals{ 0 , 0.25, 0.5, 0.75, 1, 2, 3 };
 			std::vector<double> y_vals{ 1.0 , .93, .915, .89, 0.87, 0.82, .79 };
@@ -102,9 +103,9 @@ namespace TestingCurves
 
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
-			curve.set_knotPoints(x_vals, y_vals);
-			curve.set_seperationPoints(seperation_points);
-			curve.set_interpolators(interpolators);
+			curve->set_knotPoints(x_vals, y_vals);
+			curve->set_seperationPoints(seperation_points);
+			curve->set_interpolators(interpolators);
 
 			CurveSet curve_set = CurveSet({ curve });
 			curve_set.configureRateMapping();
@@ -136,11 +137,11 @@ namespace TestingCurves
 			CurveCategory curve_category = CurveCategory::IR;
 			CurveType curve_type = CurveType::DISCOUNT;
 			std::vector curves = {
-				Curve(curve_date,  "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE),
-				Curve(curve_date,  "1M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
-				Curve(curve_date,  "3M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
-				Curve(curve_date,  "6M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
-				Curve(curve_date, "12M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
+				std::make_shared<Curve>(curve_date,  "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE),
+				std::make_shared<Curve>(curve_date,  "1M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
+				std::make_shared<Curve>(curve_date,  "3M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
+				std::make_shared<Curve>(curve_date,  "6M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
+				std::make_shared<Curve>(curve_date, "12M", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::TENOR),
 			};
 
 			std::vector<double> x_vals{ 0 , 0.25, 0.5, 0.75, 1, 2, 3 };
@@ -152,11 +153,11 @@ namespace TestingCurves
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
 
-			for (Curve& curve : curves)
+			for (auto& curve : curves)
 			{
-				curve.set_knotPoints(x_vals, y_vals);
-				curve.set_seperationPoints(seperation_points);
-				curve.set_interpolators(interpolators);
+				curve->set_knotPoints(x_vals, y_vals);
+				curve->set_seperationPoints(seperation_points);
+				curve->set_interpolators(interpolators);
 			}
 
 			CurveSet curve_set = CurveSet(curves);
@@ -193,13 +194,6 @@ namespace TestingCurves
 				double knot_year_fraction = DateUtilities::yearFraction(curve_date, maturity_date, DayCountConv::ACT365);
 				x_vals.push_back(knot_year_fraction);
 				y_vals.push_back(0.03);
-				std::string result;
-				{
-					std::stringstream ss;
-					ss << knot_year_fraction<< "\n";
-					result = ss.str();
-					Logger::WriteMessage(result.c_str());
-				}
 			}
 
 			// Need to fix
@@ -216,16 +210,16 @@ namespace TestingCurves
 			DayCountConv dcc = DayCountConv::ACT365;
 			CurveCategory curve_category = CurveCategory::IR;
 			CurveType curve_type = CurveType::DISCOUNT;
-			Curve curve = Curve(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
+			std::shared_ptr<Curve> curve = std::make_shared<Curve>(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
 
 			std::vector<double> seperation_points{ 2.0 };
 			std::vector<std::shared_ptr<IInterpolator>> interpolators;
 
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
-			curve.set_knotPoints(x_vals, y_vals);
-			curve.set_seperationPoints(seperation_points);
-			curve.set_interpolators(interpolators);
+			curve->set_knotPoints(x_vals, y_vals);
+			curve->set_seperationPoints(seperation_points);
+			curve->set_interpolators(interpolators);
 
 			CurveSet curve_set = CurveSet({ curve });
 			curve_set.configureRateMapping();
@@ -233,7 +227,35 @@ namespace TestingCurves
 
 			// Solver 
 
-			Solver solver = Solver(instrument_set, curve_set, "LM", 1e-12);
+			auto solver = std::make_shared<CurveSolver>(instrument_set, curve_set, "LM", 1e-12);
+			solver->solve();
+
+			// print Knot Points
+			auto x_values = curve->get_xValues();
+			auto y_values = curve->get_yValues();
+
+			for (size_t i = 0; i < x_values.size(); i++)
+			{
+				std::string result;
+				{
+					std::stringstream ss;
+					ss << "x," << x_values[i] << ",y," << y_values[i] << "\n";
+					result = ss.str();
+					Logger::WriteMessage(result.c_str());
+				}
+			}
+
+			auto instrument_residuals = instrument_set_pricers[0]->objectiveFunction(rate_functor_map);
+			for (size_t i = 0; i < instrument_residuals.size(); i++)
+			{
+				std::string result;
+				{
+					std::stringstream ss;
+					ss << "x," << x_values[i] << ",par-calc_par," << instrument_residuals[i] << "\n";
+					result = ss.str();
+					Logger::WriteMessage(result.c_str());
+				}
+			}
 
 		}
 

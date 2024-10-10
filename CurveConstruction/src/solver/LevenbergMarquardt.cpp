@@ -1,11 +1,18 @@
 #include "LevenbergMarquardt.h"
 
 std::vector<std::vector<double>> LevenbergMarquardt::computeJacobian(const std::vector<double>& params, 
-    ISolver& objective_function)
+    ISolver& solver_obj_ref)
 {
     std::vector<std::vector<double>> J(params.size(), std::vector<double>(params.size(), 0.0));
+    auto orig_residuals = solver_obj_ref.objectiveFunction(params);
     for (size_t i = 0; i < params.size(); ++i) {
-        J[i][i] = 1.0; // Simplified assumption: derivative is 1 for matching indices
+        auto bumped_params = params;
+        bumped_params[i] = params[i] + _1BASIS_POINT;
+        auto bumped_residuals = solver_obj_ref.objectiveFunction(bumped_params);
+        for (size_t j = 0; j < params.size(); ++j) {
+            J[i][j] = (bumped_residuals[j]- orig_residuals[j]) / _1BASIS_POINT; // Simplified assumption: derivative is 1 for matching indices
+        }
+        
     }
     return J;
 }
@@ -91,14 +98,14 @@ std::vector<double> LevenbergMarquardt::solveLinearSystem(const std::vector<std:
     return solution;
 }
 
-std::vector<double> LevenbergMarquardt::solve(std::vector<double>& initial_guess, ISolver& objective_function)
+std::vector<double> LevenbergMarquardt::solve(std::vector<double>& initial_guess, ISolver& solver_obj_ref)
 {
     std::vector<double> params = initial_guess;
     int iterations = 0;
 
     while (iterations < MAX_ITERATIONS) {
-        std::vector<double> residuals = objective_function(params);
-        std::vector<std::vector<double>> J = computeJacobian(params, objective_function);
+        std::vector<double> residuals = solver_obj_ref.objectiveFunction(params);
+        std::vector<std::vector<double>> J = computeJacobian(params, solver_obj_ref);
         std::vector<std::vector<double>> Jt = matrixTranspose(J);
         std::vector<std::vector<double>> JtJ = matrixMultiply(Jt, J);
         std::vector<std::vector<double>> I(JtJ.size(), std::vector<double>(JtJ[0].size(), 0.0));
@@ -122,7 +129,7 @@ std::vector<double> LevenbergMarquardt::solve(std::vector<double>& initial_guess
         }
 
         // Adjust lambda (simplified)
-        std::vector<double> new_residuals = objective_function(params);
+        std::vector<double> new_residuals = solver_obj_ref.objectiveFunction(params);
         if (std::inner_product(new_residuals.begin(), new_residuals.end(), new_residuals.begin(), 0.0) <
             std::inner_product(residuals.begin(), residuals.end(), residuals.begin(), 0.0)) {
             lambda /= 10.0;

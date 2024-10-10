@@ -69,6 +69,9 @@
     <ClInclude Include="src\solver\LevenbergMarquardt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\solver\ISolverAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\solver\ISolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -138,9 +141,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\solver\LevenbergMarquardt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\solver\ISolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

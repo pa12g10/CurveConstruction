@@ -22,11 +22,12 @@ public:
 	OISSwapPricer(const int& _value_date, VectorOfDictionaries& _ois_instruments);
 
 	void setInstrumentMaturity(Dictionary& instrument);
-	VectorOfDictionaries getInstruments() { return instruments; };
 
 	std::vector <double> objectiveFunction(DictionaryOfFunctors& _rates_map) override;
 	Dictionary getCurveKeys(Dictionary& instrument);
 	Dictionary price(Dictionary& instrument, DictionaryOfFunctors& _rates_map) override;
+	inline VectorOfDictionaries getInstruments() override { return instruments; };
+
 
 
 };

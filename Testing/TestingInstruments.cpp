@@ -54,7 +54,7 @@ namespace TestingInstruments
 			DayCountConv dcc = DayCountConv::ACT365;
 			CurveCategory curve_category = CurveCategory::IR;
 			CurveType curve_type = CurveType::DISCOUNT;
-			Curve curve = Curve(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
+			auto curve = std::make_shared<Curve>(curve_date, "1D", currency, exchange, calendar_key, bdc, dcc, curve_category, curve_type, CurveSplineType::DISC_BASE);
 
 			std::vector<double> x_vals{ 0 , 0.25, 0.5, 0.75, 1, 2, 3 };
 			std::vector<double> y_vals{ 1.0 , .93, .915, .89, 0.87, 0.82, .79 };
@@ -64,9 +64,9 @@ namespace TestingInstruments
 
 			interpolators.push_back(std::make_shared<LinearInterpolator>(x_vals, y_vals));
 			interpolators.push_back(std::make_shared<CubicSpline>(x_vals, y_vals));
-			curve.set_knotPoints(x_vals, y_vals);
-			curve.set_seperationPoints(seperation_points);
-			curve.set_interpolators(interpolators);
+			curve->set_knotPoints(x_vals, y_vals);
+			curve->set_seperationPoints(seperation_points);
+			curve->set_interpolators(interpolators);
 
 			CurveSet curve_set = CurveSet({ curve });
 			curve_set.configureRateMapping();

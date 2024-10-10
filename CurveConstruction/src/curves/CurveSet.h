@@ -11,12 +11,13 @@ class CurveSet
 {
 private:
 	std::map<std::string, Curve> curve_map;
-	std::vector<Curve> curves;
+	std::vector<std::shared_ptr<Curve>> curves;
 	std::map<std::string, std::function<double(int)>> rate_functor_map;
+	bool is_rates_map_configured = false;
 
 
 public:
-	CurveSet(const std::vector<Curve>& _curves) : curves(_curves) {};
+	CurveSet(const std::vector<std::shared_ptr<Curve>>& _curves) : curves(_curves) {};
 
 
 	void configureRateMapping();

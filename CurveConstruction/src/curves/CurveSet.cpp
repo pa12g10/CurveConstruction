@@ -1,10 +1,11 @@
 #include "CurveSet.h"
 #include <memory>
+#include <math.h>
 
 void CurveSet::configureRateMapping()
 {
 	auto it = std::find_if(curves.begin(), curves.end(),
-		[](const Curve& curve) { return curve.is_base == true; });
+		[](const auto& curve) { return curve->is_base == true; });
 	
 	int index = 0;
 	if (it != curves.end()) {
@@ -14,21 +15,21 @@ void CurveSet::configureRateMapping()
 		throw std::invalid_argument("Cannot find a base curve in the input curves vector.");
 	};
 
-	Curve base_curve = curves[index];
+	auto base_curve = curves[index];
 
-	for (Curve& curve : curves)
+	for (auto& curve : curves)
 	{
-		if (curve.curve_spline_type == CurveSplineType::DISCOUNT || curve.curve_spline_type == CurveSplineType::DISC_BASE) {
-			rate_functor_map[curve.name + "_DF"] = [&](const int& date) {
-				return CurveSet::getDiscountFactor(date, curve);
+		if (curve->curve_spline_type == CurveSplineType::DISCOUNT || curve->curve_spline_type == CurveSplineType::DISC_BASE) {
+			rate_functor_map[curve->name + "_DF"] = [&](const int& date) {
+				return CurveSet::getDiscountFactor(date, *curve);
 				};
-			rate_functor_map[curve.name + "_FWD"] = [&](const int& date) {
-				return CurveSet::getForwardRate(date, curve);
+			rate_functor_map[curve->name + "_FWD"] = [&](const int& date) {
+				return CurveSet::getForwardRate(date, *curve);
 				};
 		}
-		else if (curve.curve_spline_type == CurveSplineType::TENOR) {
-			rate_functor_map[curve.name + "_FWD"] = [&](const int& date) {
-				return CurveSet::getForwardRate(date, base_curve, curve);
+		else if (curve->curve_spline_type == CurveSplineType::TENOR) {
+			rate_functor_map[curve->name + "_FWD"] = [&](const int& date) {
+				return CurveSet::getForwardRate(date, *base_curve, *curve);
 				};
 		}
 		else {
@@ -36,21 +37,24 @@ void CurveSet::configureRateMapping()
 		}
 
 	}
+	is_rates_map_configured = true;
 }
 
 void CurveSet::setKnotPoints(const vector<double>& _initial_guess)
 {
 
 	for (auto& curve : curves) {
-		curve.set_yValues(_initial_guess);
-		curve.set_interpolator_values();
+		curve->set_yValues(_initial_guess);
+		curve->set_interpolator_values();
+		curve->resetCurveCache();
 	}
 
 }
 
+
 double CurveSet::getDiscountFactor(const int& discount_date, Curve& curve)
 {
-	return curve(discount_date);
+	return exp(-curve(discount_date));
 }
 
 double CurveSet::getForwardRate(const int& reset_start_date, Curve& curve)
