@@ -23,15 +23,17 @@ The code was written using visual studio 2022, ideally I would of made a CMake f
 **Improvements**
 In this section I list initial list of improvements, I am sure there are many more to be added. 
 **High Priority** 
-- Add in Central Banking Meeting Dates and Step interpolation in the front end of the base curve. 
-- Put the Holiday Calendars on the heap.
+- Add in Central Banking Meeting Dates and Step interpolation in the front end of the base curve.
+- Put all Calendars to the heap
 - Add in remaining IR InstrumentPricers: OISBasis Swaps, CB Swaps, Cash etc.
+- Add Instrument Filtering Rules and Logic
 
 **Low Priority**
 - Add in FX Instrument pricers: FX Forwards and XCCY Swaps.
 - Look into the need for the use of IR and FX turns (synthetic instruments).
 - Add in Automatic Adjoint Differentiation (AAD).
 - Add in move constructors for the Curves and InstrumentPricers, so that unique pointers can be used instead of shared pointers.
+- Add serialisation
 
 **Contact Details**
 petenallen4321@gmail.com
